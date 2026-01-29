@@ -3,17 +3,18 @@
 // Force dynamic rendering for this page
 export const dynamic = 'force-dynamic';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import Navbar from '@/components/Navbar'; // ตรวจสอบ path ให้ตรงกับโปรเจกต์คุณ
-import Footer from '@/components/Footer'; // ตรวจสอบ path ให้ตรงกับโปรเจกต์คุณ
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
 import VoiceInput from '@/components/VoiceInput';
 import ImageUpload from '@/components/ImageUpload';
 import { ImagePlus, Sparkles, Copy, Check, MessageSquareQuote, MessageSquare, Tag, Video } from 'lucide-react';
 import Button from '@/components/Button';
 import ContentTypeCard from '@/components/ContentTypeCard';
 
-export default function MagicPage() {
+// Separate component that uses useSearchParams
+function MagicPageContent() {
     const searchParams = useSearchParams();
     const personaId = searchParams.get('persona');
 
@@ -916,5 +917,21 @@ export default function MagicPage() {
 
             <Footer />
         </>
+    );
+}
+
+// Main page component with Suspense boundary
+export default function MagicPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen flex items-center justify-center bg-gray-50">
+                <div className="text-center">
+                    <Sparkles className="w-12 h-12 animate-spin text-green-600 mx-auto mb-4" />
+                    <p className="text-gray-600">กำลังโหลด...</p>
+                </div>
+            </div>
+        }>
+            <MagicPageContent />
+        </Suspense>
     );
 }
